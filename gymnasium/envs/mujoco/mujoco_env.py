@@ -79,7 +79,7 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         assert self.metadata["render_modes"] == [
             "human",
             "rgb_array",
-            "depth_array",
+            "depth_array"
         ], self.metadata["render_modes"]
         if "render_fps" in self.metadata:
             assert (
@@ -378,6 +378,10 @@ class MujocoEnv(BaseMujocoEnv):
             self.model, self.data, default_camera_config, self.width, self.height
         )
 
+        self.image_renderer = MujocoRenderer(
+            self.model, self.data, default_camera_config, self.width, self.height
+        )
+
     def _initialize_simulation(
         self,
     ) -> Tuple["mujoco._structs.MjModel", "mujoco._structs.MjData"]:
@@ -410,9 +414,15 @@ class MujocoEnv(BaseMujocoEnv):
         mujoco.mj_rnePostConstraint(self.model, self.data)
 
     def render(self):
-        return self.mujoco_renderer.render(
-            self.render_mode, self.camera_id, self.camera_name
-        )
+        if self.render_mode == 'human':
+            image = self.image_renderer.render(render_mode='rgb_array')
+            return self.mujoco_renderer.render(
+                self.render_mode, self.camera_id, self.camera_name
+            ), image 
+        else:
+            return self.mujoco_renderer.render(
+                self.render_mode, self.camera_id, self.camera_name
+            ) 
 
     def close(self):
         if self.mujoco_renderer is not None:

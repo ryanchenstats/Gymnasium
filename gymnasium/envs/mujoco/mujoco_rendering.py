@@ -663,6 +663,7 @@ class MujocoRenderer:
         if render_mode in {
             "rgb_array",
             "depth_array",
+            "human_rgb"
         }:
             if camera_id is not None and camera_name is not None:
                 raise ValueError(
@@ -701,6 +702,8 @@ class MujocoRenderer:
 
             elif render_mode in {"rgb_array", "depth_array"}:
                 self.viewer = OffScreenViewer(self.model, self.data)
+            elif render_mode == 'human_rgb':
+                self.viewre
             else:
                 raise AttributeError(
                     f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, or depth_array"

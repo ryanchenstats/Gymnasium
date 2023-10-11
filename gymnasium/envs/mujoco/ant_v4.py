@@ -2,6 +2,7 @@ import numpy as np
 
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
+from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer
 from gymnasium.spaces import Box
 
 
@@ -15,8 +16,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         "render_modes": [
             "human",
             "rgb_array",
-            "depth_array",
-        ],
+            "depth_array"        ],
         "render_fps": 20,
     }
 
@@ -83,6 +83,10 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             observation_space=observation_space,
             default_camera_config=DEFAULT_CAMERA_CONFIG,
             **kwargs,
+        )
+
+        self.image_renderer = MujocoRenderer(
+            self.model, self.data, DEFAULT_CAMERA_CONFIG, self.width, self.height
         )
 
     @property
@@ -190,3 +194,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         observation = self._get_obs()
 
         return observation
+    
+    # def render(self):
+        # return self.mujoco_renderer.render(render_mode=self.render_mode)
